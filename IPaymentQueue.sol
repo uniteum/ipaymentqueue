@@ -36,7 +36,8 @@ interface IPaymentQueue {
     function owner() external view returns (address);
 
     /**
-     * @notice The token this queue pays in.
+     * @notice The token this queue pays in: the one given to {make}, or the one its lookup resolved to
+     * when the queue was made. Fixed for the life of the queue.
      */
     function token() external view returns (IERC20);
 
@@ -82,14 +83,16 @@ interface IPaymentQueue {
 
     /**
      * @notice Predict the queue {make} would return for `owner` and `token`, without making it.
+     * @dev `token` is taken as given: nothing checks that it is deployed or resolves a lookup, so a
+     * queue can be predicted on a chain its token or lookup has not reached yet.
      * @param owner The account that would call {make}, and so own the queue.
-     * @param token The token the queue would pay in.
+     * @param token The token the queue would pay in, or an {IAddressLookup} that resolves to it.
      * @param variant Vanity-mining input; 0 for the canonical address.
      * @return exists Whether that queue has already been made.
      * @return home The queue's deterministic address.
      * @return salt The CREATE2 salt derived from the arguments and `variant`.
      */
-    function made(address owner, IERC20 token, uint256 variant)
+    function made(address owner, address token, uint256 variant)
         external
         view
         returns (bool exists, address home, bytes32 salt);
@@ -97,16 +100,22 @@ interface IPaymentQueue {
     /**
      * @notice Make a queue that pays in `token`, owned by the caller, or return the one already made.
      * @dev Callable on the prototype or on any queue; either way the caller becomes the owner.
-     * @param token The token the queue pays in.
+     *
+     * `token` may be the token itself or an {IAddressLookup} whose `value()` is the token on the
+     * current chain. The queue's address is derived from `token` as given, so a queue keyed by a
+     * lookup lands at the same address on every chain and pays in whatever the lookup resolves to
+     * there. Reverts with {UnmappedLookup} when `token` has no code, or is a lookup that resolves to
+     * `address(0)`.
+     * @param token The token the queue pays in, or an {IAddressLookup} that resolves to it.
      * @param variant Vanity-mining input; 0 for the canonical address.
      * @return queue The caller's queue for `token` and `variant`.
      */
-    function make(IERC20 token, uint256 variant) external returns (IPaymentQueue queue);
+    function make(address token, uint256 variant) external returns (IPaymentQueue queue);
 
     /**
      * @notice ABI-encode a queue's init args, as {make} passes them to {zzInit}.
      */
-    function encode(address owner, IERC20 token) external pure returns (bytes memory args);
+    function encode(address owner, address token) external pure returns (bytes memory args);
 
     /**
      * @notice Emitted when payment `id` joins the line to wait for float.
@@ -128,4 +137,10 @@ interface IPaymentQueue {
      * token would accept it. Nothing is recorded; send the call again with more gas.
      */
     error TransferOutOfGas(uint256 id);
+
+    /**
+     * @notice `lookup`, given to {make} as the token, has no code on this chain, or is an
+     * {IAddressLookup} that resolves to `address(0)`. No queue is made.
+     */
+    error UnmappedLookup(address lookup);
 }
