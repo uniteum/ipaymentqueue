@@ -16,6 +16,8 @@ Depend on this repository rather than on the implementation when you only need t
 - **[IPaymentQueue.sol](IPaymentQueue.sol)** — the queue surface: `pay`, `processPayments`,
   `withdraw`, `statusOf`, `queued`, `owner`, `token`, and the typed factory calls `make`, `made` and
   `encode`.
+- **[IPaymentQueue.abi.json](IPaymentQueue.abi.json)** — the same surface as a JSON ABI, for callers
+  that do not compile Solidity. See [ABI](#abi).
 
 The factory surface underneath — `proto`, the bytes forms of `make` and `made`, and `zzInit` — comes
 from [IPrototype](https://github.com/uniteum/iproto).
@@ -51,6 +53,20 @@ IPaymentQueue queue = prototype.make(token, 0);
 
 // Pay once per id. A repeat is a no-op, whatever happened to the first call.
 IPaymentQueue.Status status = queue.pay(id, recipient, amount);
+```
+
+## ABI
+
+[IPaymentQueue.abi.json](IPaymentQueue.abi.json) is the interface's ABI, committed so that viem,
+ethers, `cast` and anything else that calls a queue without compiling Solidity can take it straight
+from this repository.
+
+The file is generated, never edited by hand. This repository has no Solidity toolchain of its own;
+whenever [IPaymentQueue.sol](IPaymentQueue.sol) changes, regenerate the ABI from any Foundry project
+that compiles the interface and commit it here alongside the change:
+
+```bash
+forge inspect IPaymentQueue abi --json > lib/ipaymentqueue/IPaymentQueue.abi.json
 ```
 
 ## Dependencies
