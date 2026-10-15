@@ -14,8 +14,8 @@ Depend on this repository rather than on the implementation when you only need t
 ## Contents
 
 - **[IPaymentQueue.sol](IPaymentQueue.sol)** — the queue surface: `pay`, `processPayments`,
-  `withdraw`, `statusOf`, `queued`, `owner`, `token`, and the typed factory calls `make`, `made` and
-  `encode`.
+  `withdraw`, `statusOf`, `blockOf`, `queued`, `owner`, `token`, and the typed factory calls `make`,
+  `made` and `encode`.
 - **[IPaymentQueue.abi.json](IPaymentQueue.abi.json)** — the same surface as a JSON ABI, for callers
   that do not compile Solidity. See [ABI](#abi).
 

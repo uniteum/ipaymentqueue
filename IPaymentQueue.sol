@@ -47,6 +47,13 @@ interface IPaymentQueue {
     function statusOf(uint256 id) external view returns (Status);
 
     /**
+     * @notice The block in which payment `id` reached its current status, or 0 while it is `Unknown`.
+     * @dev The transaction that set the status emitted its event in that block, so filtering that one
+     * block's logs on the indexed `id` finds it, however long ago it was.
+     */
+    function blockOf(uint256 id) external view returns (uint256);
+
+    /**
      * @notice How many payments are waiting for float.
      */
     function queued() external view returns (uint256);
