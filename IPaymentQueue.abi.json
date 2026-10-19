@@ -44,6 +44,32 @@
   },
   {
     "type": "function",
+    "name": "fees",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "funds",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "made",
     "inputs": [
       {
@@ -136,6 +162,11 @@
         "name": "amount",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "feeBasisPoints",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [
@@ -213,7 +244,25 @@
   },
   {
     "type": "function",
-    "name": "withdraw",
+    "name": "withdrawFees",
+    "inputs": [
+      {
+        "name": "to",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "withdrawFunds",
     "inputs": [
       {
         "name": "to",
@@ -250,6 +299,12 @@
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
+      },
+      {
+        "name": "fee",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       }
     ],
     "anonymous": false
@@ -272,6 +327,12 @@
       },
       {
         "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "fee",
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
@@ -300,9 +361,48 @@
         "type": "uint256",
         "indexed": false,
         "internalType": "uint256"
+      },
+      {
+        "name": "fee",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
       }
     ],
     "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "FeeTooHigh",
+    "inputs": [
+      {
+        "name": "feeBasisPoints",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "InsufficientFees",
+    "inputs": [
+      {
+        "name": "available",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "InsufficientFunds",
+    "inputs": [
+      {
+        "name": "available",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ]
   },
   {
     "type": "error",
